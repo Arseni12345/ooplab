@@ -62,9 +62,6 @@ public class FXMLMainFormController implements Initializable, Controller {
     @FXML
     private Menu menuTabulate;
 
-    @FXML
-    private Menu menuIntegration;
-
     private Stage primaryStage;
 
     public void setStage(Stage stage) {
@@ -150,9 +147,23 @@ public class FXMLMainFormController implements Initializable, Controller {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Tabulate function");
         dialog.setHeaderText("Tabulate function");
-        dialog.setContentText("Enter function to tabulate:");
+        dialog.setContentText("Enter x out of scope:");
         dialog.setResizable(false);
+        TextInputDialog dialogResult = new TextInputDialog();
+        dialogResult.setTitle("Result of integrate");
+        dialogResult.setHeaderText("Result of integrate");
+        dialogResult.setContentText("Result of integrate:");
+        dialogResult.setResizable(false);
         Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                dialogResult.getEditor().setText(Double.toString(Main.tabFDoc.getFunctionValue(Double.parseDouble(result.get()))));
+                dialogResult.getEditor().setEditable(false);
+                dialogResult.show();
+            } catch (Exception e) {
+                showErrorMessage("Illegal format!!!");
+            }
+        }
     }
     @FXML
     private void addPoint(ActionEvent av) {

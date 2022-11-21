@@ -43,9 +43,6 @@
                                 <MenuItem mnemonicParsing="false" onAction="#tabulateFunction" text="Tabulate" />
                             </items>
                         </Menu>
-                        <Menu fx:id="menuIntegration" mnemonicParsing="false" text="Integrate">
-                            <MenuItem mnemonicParsing="false" onAction="#integrate" text="integrate" />
-                        </Menu>
                     </menus>
                 </MenuBar>
             </children>
