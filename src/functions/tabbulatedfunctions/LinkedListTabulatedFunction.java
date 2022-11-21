@@ -4,7 +4,31 @@ import functions.FunctionPoint;
 import functions.exception.FunctionPointIndexOutOfBoundsException;
 import functions.exception.InappropriateFunctionPointException;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
 public class LinkedListTabulatedFunction implements TabulatedFunction {
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            private FunctionNode current = head;
+            @Override
+            public boolean hasNext() {
+                return current.next == null ? false : true;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
+                current = current.next;
+                return current.point;
+            }
+        };
+    }
 
     private class FunctionNode{
 
@@ -361,6 +385,24 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
             return new LinkedListTabulatedFunction(points);
         } catch (InappropriateFunctionPointException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static class LinkedListTabulatedFunctionFactory implements TabulatedFunctionFactory{
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, int pointsCount) throws InappropriateFunctionPointException {
+            return new LinkedListTabulatedFunction(leftX, rightX, pointsCount);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, double[] values) throws InappropriateFunctionPointException {
+            return new LinkedListTabulatedFunction(leftX, rightX, values);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) throws InappropriateFunctionPointException {
+            return new LinkedListTabulatedFunction(points);
         }
     }
 }

@@ -3,6 +3,11 @@ package functions.basic;
 import functions.Function;
 
 public class Log implements Function {
+    double base;
+
+    public Log(double base){
+        this.base = base;
+    }
     @Override
     public double getLeftDomainBorder() {
         return 0;
@@ -15,6 +20,6 @@ public class Log implements Function {
 
     @Override
     public double getFunctionValue(double x) {
-        return Math.log(x);
+        return Math.log(x) / Math.log(base);
     }
 }

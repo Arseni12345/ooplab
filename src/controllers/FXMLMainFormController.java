@@ -9,19 +9,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FXMLMainFormController implements Initializable, Controller {
@@ -66,6 +62,9 @@ public class FXMLMainFormController implements Initializable, Controller {
     @FXML
     private Menu menuTabulate;
 
+    @FXML
+    private Menu menuIntegration;
+
     private Stage primaryStage;
 
     public void setStage(Stage stage) {
@@ -88,12 +87,80 @@ public class FXMLMainFormController implements Initializable, Controller {
     }
 
     @FXML
+    private void openFile(ActionEvent av) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open tabulated function document");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Document (*.json)", "*.json"));
+        fileChooser.setInitialDirectory(new File(".\\"));
+        File file = fileChooser.showOpenDialog(primaryStage);
+        if (file == null)
+            return;
+        try {
+            Main.tabFDoc.loadFunction(file.getAbsolutePath());
+        } catch (Throwable e) {
+            showErrorMessage("Failed to load function!");
+        }
+    }
+
+    @FXML
+    private void saveAsFile(ActionEvent av) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save tabulated function as...");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Document (*.json)", "*.json"));
+        fileChooser.setInitialDirectory(new File(".\\"));
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file == null)
+            return;
+        try {
+            Main.tabFDoc.saveFunctionAs(file.getAbsolutePath());
+        } catch (Throwable e) {
+            showErrorMessage("Failed to save function!");
+        }
+    }
+    @FXML
+    private void integrate(ActionEvent av){
+
+    }
+
+    @FXML
+    private void saveFile(ActionEvent av) {
+        if (Main.tabFDoc.getFileName() != null)
+            try {
+                Main.tabFDoc.saveFunction();
+            } catch (Throwable e) {
+                showErrorMessage("Failed to save function!");
+            }
+        else
+            saveAsFile(av);
+    }
+
+    @FXML
+    private void loadFunction(ActionEvent av) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open function file");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Function file", "*"));
+        fileChooser.setInitialDirectory(new File(".\\"));
+        File file = fileChooser.showOpenDialog(primaryStage);
+        if (file == null)
+            return;
+    }
+
+    @FXML
+    private void tabulateFunction(ActionEvent av) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Tabulate function");
+        dialog.setHeaderText("Tabulate function");
+        dialog.setContentText("Enter function to tabulate:");
+        dialog.setResizable(false);
+        Optional<String> result = dialog.showAndWait();
+    }
+    @FXML
     private void addPoint(ActionEvent av) {
         try {
             Main.tabFDoc
                     .addPoint(new FunctionPoint(Double.parseDouble(edX.getText()), Double.parseDouble(edY.getText())));
         } catch (Throwable e) {
-            System.err.println(e.getClass().getName());
+            showErrorMessage("Cannot add point!!!");
         }
     }
 
@@ -102,7 +169,7 @@ public class FXMLMainFormController implements Initializable, Controller {
         try {
             Main.tabFDoc.deletePoint(Main.tabFDoc.getPointsCount() - 1);
         } catch (Throwable e) {
-            System.err.println(e.getClass().getName());
+            showErrorMessage("Cannot delete point!!!");
         }
     }
 
@@ -151,6 +218,14 @@ public class FXMLMainFormController implements Initializable, Controller {
 
     public int showDialog() {
         return FXMLNewDocFormController.showDialog(primaryStage);
+    }
+
+    private void showErrorMessage(String message) {
+        Alert errorMessage = new Alert(Alert.AlertType.ERROR);
+        errorMessage.setHeaderText("Error");
+        errorMessage.setContentText(message);
+        errorMessage.setResizable(false);
+        errorMessage.showAndWait();
     }
 
 }
