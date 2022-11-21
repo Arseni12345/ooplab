@@ -6,7 +6,7 @@ import functions.exception.InappropriateFunctionPointException;
 
 import java.io.Serializable;
 
-public interface TabulatedFunction extends Function, Serializable {
+public interface TabulatedFunction extends Function, Serializable, Iterable<FunctionPoint> {
     double getFunctionValue(double pointX);
     int getPointsCount();
     FunctionPoint getPoint(int index) throws IndexOutOfBoundsException;

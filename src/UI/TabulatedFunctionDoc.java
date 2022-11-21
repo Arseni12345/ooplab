@@ -13,6 +13,8 @@ import org.json.simple.parser.JSONParser;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class TabulatedFunctionDoc implements TabulatedFunction{
 
@@ -22,14 +24,14 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
 
     boolean modify;
 
-    private Controller contoller;
+    private Controller controller;
 
     public void callRedraw() {
-        contoller.redraw();
+        controller.redraw();
     }
 
     public void registerRedrawFunctionController(Controller controller) {
-        contoller = controller;
+        this.controller = controller;
         callRedraw();
     }
 
@@ -54,11 +56,15 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
     public void newFunction(double leftX, double rightX, int pointsCount) throws InappropriateFunctionPointException {
         tabulatedFunction = new LinkedListTabulatedFunction(leftX, rightX, pointsCount);
         modify = true;
+        if(controller != null) {
+            callRedraw();
+        }
     }
 
     public void tabulateFunction(Function function, double leftX, double rightX, int pointsCount){
         tabulatedFunction = TabulatedFunctions.tabulate(function, leftX, rightX, pointsCount);
         modify = true;
+        callRedraw();
     }
 
     public void saveFunctionAs(String fileName) throws Exception{
@@ -78,6 +84,7 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
         }
         this.tabulatedFunction = new LinkedListTabulatedFunction(points);
         modify = true;
+        callRedraw();
     }
 
     public void saveFunction() throws Exception{
@@ -103,6 +110,7 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
     @Override
     public void setPoint(int index, FunctionPoint point) throws Exception {
         tabulatedFunction.setPoint(index, point);
+        callRedraw();
     }
 
     @Override
@@ -113,6 +121,7 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
     @Override
     public void setPointX(int index, double pointX) throws Exception {
         tabulatedFunction.setPointX(index, pointX);
+        callRedraw();
     }
 
     @Override
@@ -128,11 +137,13 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
     @Override
     public void setPointY(int index, double pointY) throws InappropriateFunctionPointException, Exception {
         tabulatedFunction.setPointY(index, pointY);
+        callRedraw();
     }
 
     @Override
     public void deletePoint(int index) throws Exception {
         tabulatedFunction.deletePoint(index);
+        callRedraw();
         callRedraw();
     }
 
@@ -160,5 +171,28 @@ public class TabulatedFunctionDoc implements TabulatedFunction{
     @Override
     public int hashCode(){
         return tabulatedFunction.hashCode();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            int i = 0;
+            @Override
+            public boolean hasNext() {
+                return i == tabulatedFunction.getLength() - 1 ? false : true;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
+                return tabulatedFunction.getPoint(++i);
+            }
+        };
     }
 }

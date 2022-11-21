@@ -4,6 +4,9 @@ import functions.FunctionPoint;
 import functions.exception.FunctionPointIndexOutOfBoundsException;
 import functions.exception.InappropriateFunctionPointException;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class ArrayTabulatedFunction implements TabulatedFunction {
 
     private FunctionPoint[] points;
@@ -265,6 +268,43 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
             return new ArrayTabulatedFunction(points);
         } catch (InappropriateFunctionPointException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            int i = 0;
+            @Override
+            public boolean hasNext() {
+                return i == length - 1 ? false : true;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if (!hasNext()){
+                    throw new NoSuchElementException();
+                }
+                return points[++i];
+            }
+        };
+    }
+
+    public static class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory{
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, int pointsCount) throws InappropriateFunctionPointException {
+            return new ArrayTabulatedFunction(leftX, rightX, pointsCount);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, double[] values) throws InappropriateFunctionPointException {
+            return new ArrayTabulatedFunction(leftX, rightX, values);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) throws InappropriateFunctionPointException {
+            return new ArrayTabulatedFunction(points);
         }
     }
 }
