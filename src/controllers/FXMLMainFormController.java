@@ -150,9 +150,9 @@ public class FXMLMainFormController implements Initializable, Controller {
         dialog.setContentText("Enter x out of scope:");
         dialog.setResizable(false);
         TextInputDialog dialogResult = new TextInputDialog();
-        dialogResult.setTitle("Result of integrate");
-        dialogResult.setHeaderText("Result of integrate");
-        dialogResult.setContentText("Result of integrate:");
+        dialogResult.setTitle("Function value at x");
+        dialogResult.setHeaderText("Function value at x");
+        dialogResult.setContentText("Function value at x:");
         dialogResult.setResizable(false);
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {

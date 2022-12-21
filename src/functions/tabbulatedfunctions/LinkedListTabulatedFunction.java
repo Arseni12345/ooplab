@@ -91,7 +91,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
             newNode = new FunctionNode(node, node.prev);
             node.prev.next = newNode;
             node.prev = newNode;
-            return newNode;
         }else{
             newNode = new FunctionNode(head, null);
             head.prev = newNode;
